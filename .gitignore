@@ -4,6 +4,7 @@
 .RData
 .Ruserdata
 .Rproj.user
+.quarto/
 *.Rproj
 *.tar.gz
 ..Rcheck/
@@ -15,3 +16,6 @@ src/*.dylib
 check
 ppd.html
 ppd_files/
+
+/.quarto/
+**/*.quarto_ipynb

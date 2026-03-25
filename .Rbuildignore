@@ -1,7 +1,10 @@
 ^.*\.Rproj$
 ^\.DS_Store$
 ^\.github$
+^\.quarto$
+^_quarto\.yml$
+^docs$
+^index\.qmd$
 ^ppd\.html$
 ^ppd_files$
 ^ppd\.qmd$
-
