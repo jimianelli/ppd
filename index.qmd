@@ -9,6 +9,8 @@ This document describes a workflow to propagate uncertainty in a statistical age
 
 The approach combines posterior predictive simulation with re-estimation.
 
+Browse the repository on GitHub: [jimianelli/ppd](https://github.com/jimianelli/ppd)
+
 ---
 
 ## Model fitting

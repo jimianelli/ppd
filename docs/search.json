@@ -4,14 +4,14 @@
     "href": "index.html",
     "title": "Posterior Predictive Reference Point Estimation in an Age-Structured Model",
     "section": "",
-    "text": "This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as \\(F_{35\\%}\\).\nThe approach combines posterior predictive simulation with re-estimation."
+    "text": "This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as \\(F_{35\\%}\\).\nThe approach combines posterior predictive simulation with re-estimation.\nBrowse the repository on GitHub: jimianelli/ppd"
   },
   {
     "objectID": "index.html#overview",
     "href": "index.html#overview",
     "title": "Posterior Predictive Reference Point Estimation in an Age-Structured Model",
     "section": "",
-    "text": "This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as \\(F_{35\\%}\\).\nThe approach combines posterior predictive simulation with re-estimation."
+    "text": "This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as \\(F_{35\\%}\\).\nThe approach combines posterior predictive simulation with re-estimation.\nBrowse the repository on GitHub: jimianelli/ppd"
   },
   {
     "objectID": "index.html#model-fitting",
