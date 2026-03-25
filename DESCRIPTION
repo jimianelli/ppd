@@ -1,0 +1,19 @@
+Package: ppd
+Title: Posterior Predictive Reference Point Estimation
+Version: 0.0.0.9000
+Author: Jim Ianelli [aut, cre]
+Maintainer: Jim Ianelli <jim.ianelli@gmail.com>
+Authors@R:
+    person(given = "Jim", family = "Ianelli", email = "jim.ianelli@gmail.com",
+           role = c("aut", "cre"))
+Description: Provides a starting point for posterior predictive reference
+    point estimation workflows in fisheries applications. The initial package
+    includes generic spawning potential ratio helpers and package infrastructure
+    so age-structured model components can be added incrementally.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends:
+    R (>= 4.1.0)
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

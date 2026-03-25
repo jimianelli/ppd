@@ -1,0 +1,130 @@
+---
+title: "Posterior Predictive Reference Point Estimation in an Age-Structured Model"
+format: html
+---
+
+## Overview
+
+This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as $F_{35\%}$.
+
+The approach combines posterior predictive simulation with re-estimation.
+
+---
+
+## Model fitting
+
+We fit the model using RTMB:
+
+```r
+obj <- MakeADFun(data, parameters, DLL="your_model", random="states")
+opt <- nlminb(obj$par, obj$fn, obj$gr)
+rep <- sdreport(obj)
+```
+
+Posterior uncertainty is approximated using:
+
+* Multivariate normal approximation from the joint precision matrix, or
+* MCMC sampling (preferred)
+
+---
+
+## Posterior predictive simulation
+
+For each posterior draw $\theta^{(s)}$, we simulate data:
+
+$$
+y^{rep,(s)} \sim p(y \mid \theta^{(s)})
+$$
+
+This is implemented using the `SIMULATE` block in the TMB model.
+
+---
+
+## Re-estimation
+
+Each simulated dataset is refit:
+
+```r
+obj_sim <- MakeADFun(sim_data, parameters, DLL="your_model", random="states")
+opt <- nlminb(obj_sim$par, obj_sim$fn, obj_sim$gr)
+rep <- sdreport(obj_sim)
+```
+
+This step is critical because it propagates estimation uncertainty in selectivity.
+
+---
+
+## Spawning potential ratio (SPR)
+
+SPR is computed as:
+
+$$
+SPR(F) = \frac{SSB(F)}{SSB(F=0)}
+$$
+
+where spawning biomass per recruit is derived from survivorship under fishing mortality $F$.
+
+---
+
+## Estimation of $F_{35\%}$
+
+For each refit, we solve:
+
+$$
+SPR(F_{35\%}) = 0.35
+$$
+
+using a root-finding algorithm.
+
+---
+
+## Algorithm
+
+```r
+for (s in 1:S) {
+  theta_s <- draw_theta()
+
+  sim_data <- simulate_data(theta_s)
+
+  fit_s <- refit_model(sim_data)
+
+  sel_hat <- extract_selectivity(fit_s$rep)
+
+  F35[s] <- find_F35(sel_hat, M, wa, mat)
+}
+```
+
+---
+
+## Output
+
+The result is a distribution:
+
+$$
+\{ F_{35\%}^{(s)} \}_{s=1}^S
+$$
+
+This reflects:
+
+* Parameter uncertainty
+* Observation error
+* Re-estimation variability
+* Time-varying selectivity uncertainty
+
+---
+
+## Notes
+
+* Selectivity used for SPR must match the operational definition (e.g., terminal year, block average)
+* Recruitment assumptions can influence results if weight-at-age or maturity vary over time
+* Flexible selectivity increases variance in $F_{35\%}$
+
+---
+
+## Extensions
+
+* Compare plug-in vs re-estimated distributions
+* Evaluate bias via median($F_{35\%}$) vs true generating value
+* Use this framework inside MSE loops
+
+---

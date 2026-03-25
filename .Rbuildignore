@@ -1,0 +1,7 @@
+^.*\.Rproj$
+^\.DS_Store$
+^\.github$
+^ppd\.html$
+^ppd_files$
+^ppd\.qmd$
+

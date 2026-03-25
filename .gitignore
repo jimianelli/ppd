@@ -1,0 +1,17 @@
+.DS_Store
+.Rhistory
+.Rapp.history
+.RData
+.Ruserdata
+.Rproj.user
+*.Rproj
+*.tar.gz
+..Rcheck/
+*.Rcheck/
+src/*.o
+src/*.so
+src/*.dll
+src/*.dylib
+check
+ppd.html
+ppd_files/
