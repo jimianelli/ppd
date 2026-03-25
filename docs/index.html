@@ -178,9 +178,10 @@ window.Quarto = {
   <li><a href="#posterior-predictive-simulation" id="toc-posterior-predictive-simulation" class="nav-link" data-scroll-target="#posterior-predictive-simulation">Posterior predictive simulation</a></li>
   <li><a href="#re-estimation" id="toc-re-estimation" class="nav-link" data-scroll-target="#re-estimation">Re-estimation</a></li>
   <li><a href="#spawning-potential-ratio-spr" id="toc-spawning-potential-ratio-spr" class="nav-link" data-scroll-target="#spawning-potential-ratio-spr">Spawning potential ratio (SPR)</a></li>
-  <li><a href="#estimation-of-f_35" id="toc-estimation-of-f_35" class="nav-link" data-scroll-target="#estimation-of-f_35">Estimation of <span class="math inline">\(F_{35\%}\)</span></a></li>
+  <li><a href="#estimation-of-spr-based-reference-points" id="toc-estimation-of-spr-based-reference-points" class="nav-link" data-scroll-target="#estimation-of-spr-based-reference-points">Estimation of SPR-Based Reference Points</a></li>
   <li><a href="#algorithm" id="toc-algorithm" class="nav-link" data-scroll-target="#algorithm">Algorithm</a></li>
   <li><a href="#output" id="toc-output" class="nav-link" data-scroll-target="#output">Output</a></li>
+  <li><a href="#management-application" id="toc-management-application" class="nav-link" data-scroll-target="#management-application">Management Application</a></li>
   <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes">Notes</a></li>
   <li><a href="#extensions" id="toc-extensions" class="nav-link" data-scroll-target="#extensions">Extensions</a></li>
   </ul>
@@ -210,7 +211,7 @@ window.Quarto = {
 
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as <span class="math inline">\(F_{35\%}\)</span>.</p>
+<p>This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as <span class="math inline">\(F_{35\%}\)</span> and <span class="math inline">\(F_{40\%}\)</span>.</p>
 <p>The approach combines posterior predictive simulation with re-estimation.</p>
 <p>Browse the repository on GitHub: <a href="https://github.com/jimianelli/ppd">jimianelli/ppd</a></p>
 <hr>
@@ -255,13 +256,13 @@ SPR(F) = \frac{SSB(F)}{SSB(F=0)}
 <p>where spawning biomass per recruit is derived from survivorship under fishing mortality <span class="math inline">\(F\)</span>.</p>
 <hr>
 </section>
-<section id="estimation-of-f_35" class="level2">
-<h2 class="anchored" data-anchor-id="estimation-of-f_35">Estimation of <span class="math inline">\(F_{35\%}\)</span></h2>
-<p>For each refit, we solve:</p>
+<section id="estimation-of-spr-based-reference-points" class="level2">
+<h2 class="anchored" data-anchor-id="estimation-of-spr-based-reference-points">Estimation of SPR-Based Reference Points</h2>
+<p>For each refit, we solve for quantities such as:</p>
 <p><span class="math display">\[
 SPR(F_{35\%}) = 0.35
 \]</span></p>
-<p>using a root-finding algorithm.</p>
+<p>and, similarly, <span class="math inline">\(SPR(F_{40\%}) = 0.40\)</span> using a root-finding algorithm.</p>
 <hr>
 </section>
 <section id="algorithm" class="level2">
@@ -276,15 +277,17 @@ SPR(F_{35\%}) = 0.35
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  sel_hat <span class="ot">&lt;-</span> <span class="fu">extract_selectivity</span>(fit_s<span class="sc">$</span>rep)</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  F35[s] <span class="ot">&lt;-</span> <span class="fu">find_F35</span>(sel_hat, M, wa, mat)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  F40[s] <span class="ot">&lt;-</span> <span class="fu">find_F40</span>(sel_hat, M, wa, mat)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <hr>
 </section>
 <section id="output" class="level2">
 <h2 class="anchored" data-anchor-id="output">Output</h2>
-<p>The result is a distribution:</p>
+<p>The result is a posterior predictive distribution for each reference point, for example:</p>
 <p><span class="math display">\[
 \{ F_{35\%}^{(s)} \}_{s=1}^S
 \]</span></p>
+<p>and likewise <span class="math inline">\(\{ F_{40\%}^{(s)} \}_{s=1}^S\)</span>.</p>
 <p>This reflects:</p>
 <ul>
 <li>Parameter uncertainty</li>
@@ -294,12 +297,20 @@ SPR(F_{35\%}) = 0.35
 </ul>
 <hr>
 </section>
+<section id="management-application" class="level2">
+<h2 class="anchored" data-anchor-id="management-application">Management Application</h2>
+<p>One motivation for computing the posterior predictive distribution of quantities such as <span class="math inline">\(F_{35\%}\)</span> and <span class="math inline">\(F_{40\%}\)</span> is to support decisions when a risk table score is elevated for assessment-related considerations or population dynamics considerations.</p>
+<p>When the risk table remains at a normal level, a single plug-in estimate of a reference point may be adequate for routine advice. When concern is raised, however, the distribution itself becomes informative because it shows how much uncertainty there is in the appropriate SPR-based target once observation error, parameter uncertainty, and refitting instability are propagated.</p>
+<p>In that setting, the PPD provides a defensible way to translate increased concern into more precautionary advice. For example, one could compare the distributions of <span class="math inline">\(F_{35\%}\)</span> and <span class="math inline">\(F_{40\%}\)</span>, use lower quantiles of the estimated reference point distribution rather than the median, or otherwise scale the applied harvest rate according to whether the risk table score indicates moderate or extreme concern. The main point is that an elevated risk score can be tied to a quantitative change in how conservative the chosen fishing mortality target should be, rather than relying only on an ad hoc adjustment.</p>
+<hr>
+</section>
 <section id="notes" class="level2">
 <h2 class="anchored" data-anchor-id="notes">Notes</h2>
 <ul>
 <li>Selectivity used for SPR must match the operational definition (e.g., terminal year, block average)</li>
 <li>Recruitment assumptions can influence results if weight-at-age or maturity vary over time</li>
-<li>Flexible selectivity increases variance in <span class="math inline">\(F_{35\%}\)</span></li>
+<li>The same workflow applies to <span class="math inline">\(F_{35\%}\)</span>, <span class="math inline">\(F_{40\%}\)</span>, or other SPR-based targets</li>
+<li>Flexible selectivity increases variance in these derived reference points</li>
 </ul>
 <hr>
 </section>
@@ -307,7 +318,8 @@ SPR(F_{35\%}) = 0.35
 <h2 class="anchored" data-anchor-id="extensions">Extensions</h2>
 <ul>
 <li>Compare plug-in vs re-estimated distributions</li>
-<li>Evaluate bias via median(<span class="math inline">\(F_{35\%}\)</span>) vs true generating value</li>
+<li>Evaluate bias via median(<span class="math inline">\(F_{35\%}\)</span>) or median(<span class="math inline">\(F_{40\%}\)</span>) vs true generating value</li>
+<li>Use this framework to formalize risk-table adjustments to target fishing mortality</li>
 <li>Use this framework inside MSE loops</li>
 </ul>
 <hr>

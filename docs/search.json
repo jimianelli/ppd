@@ -4,14 +4,14 @@
     "href": "index.html",
     "title": "Posterior Predictive Reference Point Estimation in an Age-Structured Model",
     "section": "",
-    "text": "This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as \\(F_{35\\%}\\).\nThe approach combines posterior predictive simulation with re-estimation.\nBrowse the repository on GitHub: jimianelli/ppd"
+    "text": "This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as \\(F_{35\\%}\\) and \\(F_{40\\%}\\).\nThe approach combines posterior predictive simulation with re-estimation.\nBrowse the repository on GitHub: jimianelli/ppd"
   },
   {
     "objectID": "index.html#overview",
     "href": "index.html#overview",
     "title": "Posterior Predictive Reference Point Estimation in an Age-Structured Model",
     "section": "",
-    "text": "This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as \\(F_{35\\%}\\).\nThe approach combines posterior predictive simulation with re-estimation.\nBrowse the repository on GitHub: jimianelli/ppd"
+    "text": "This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as \\(F_{35\\%}\\) and \\(F_{40\\%}\\).\nThe approach combines posterior predictive simulation with re-estimation.\nBrowse the repository on GitHub: jimianelli/ppd"
   },
   {
     "objectID": "index.html#model-fitting",
@@ -42,38 +42,45 @@
     "text": "Spawning potential ratio (SPR)\nSPR is computed as:\n\\[\nSPR(F) = \\frac{SSB(F)}{SSB(F=0)}\n\\]\nwhere spawning biomass per recruit is derived from survivorship under fishing mortality \\(F\\)."
   },
   {
-    "objectID": "index.html#estimation-of-f_35",
-    "href": "index.html#estimation-of-f_35",
+    "objectID": "index.html#estimation-of-spr-based-reference-points",
+    "href": "index.html#estimation-of-spr-based-reference-points",
     "title": "Posterior Predictive Reference Point Estimation in an Age-Structured Model",
-    "section": "Estimation of \\(F_{35\\%}\\)",
-    "text": "Estimation of \\(F_{35\\%}\\)\nFor each refit, we solve:\n\\[\nSPR(F_{35\\%}) = 0.35\n\\]\nusing a root-finding algorithm."
+    "section": "Estimation of SPR-Based Reference Points",
+    "text": "Estimation of SPR-Based Reference Points\nFor each refit, we solve for quantities such as:\n\\[\nSPR(F_{35\\%}) = 0.35\n\\]\nand, similarly, \\(SPR(F_{40\\%}) = 0.40\\) using a root-finding algorithm."
   },
   {
     "objectID": "index.html#algorithm",
     "href": "index.html#algorithm",
     "title": "Posterior Predictive Reference Point Estimation in an Age-Structured Model",
     "section": "Algorithm",
-    "text": "Algorithm\nfor (s in 1:S) {\n  theta_s &lt;- draw_theta()\n\n  sim_data &lt;- simulate_data(theta_s)\n\n  fit_s &lt;- refit_model(sim_data)\n\n  sel_hat &lt;- extract_selectivity(fit_s$rep)\n\n  F35[s] &lt;- find_F35(sel_hat, M, wa, mat)\n}"
+    "text": "Algorithm\nfor (s in 1:S) {\n  theta_s &lt;- draw_theta()\n\n  sim_data &lt;- simulate_data(theta_s)\n\n  fit_s &lt;- refit_model(sim_data)\n\n  sel_hat &lt;- extract_selectivity(fit_s$rep)\n\n  F35[s] &lt;- find_F35(sel_hat, M, wa, mat)\n  F40[s] &lt;- find_F40(sel_hat, M, wa, mat)\n}"
   },
   {
     "objectID": "index.html#output",
     "href": "index.html#output",
     "title": "Posterior Predictive Reference Point Estimation in an Age-Structured Model",
     "section": "Output",
-    "text": "Output\nThe result is a distribution:\n\\[\n\\{ F_{35\\%}^{(s)} \\}_{s=1}^S\n\\]\nThis reflects:\n\nParameter uncertainty\nObservation error\nRe-estimation variability\nTime-varying selectivity uncertainty"
+    "text": "Output\nThe result is a posterior predictive distribution for each reference point, for example:\n\\[\n\\{ F_{35\\%}^{(s)} \\}_{s=1}^S\n\\]\nand likewise \\(\\{ F_{40\\%}^{(s)} \\}_{s=1}^S\\).\nThis reflects:\n\nParameter uncertainty\nObservation error\nRe-estimation variability\nTime-varying selectivity uncertainty"
+  },
+  {
+    "objectID": "index.html#management-application",
+    "href": "index.html#management-application",
+    "title": "Posterior Predictive Reference Point Estimation in an Age-Structured Model",
+    "section": "Management Application",
+    "text": "Management Application\nOne motivation for computing the posterior predictive distribution of quantities such as \\(F_{35\\%}\\) and \\(F_{40\\%}\\) is to support decisions when a risk table score is elevated for assessment-related considerations or population dynamics considerations.\nWhen the risk table remains at a normal level, a single plug-in estimate of a reference point may be adequate for routine advice. When concern is raised, however, the distribution itself becomes informative because it shows how much uncertainty there is in the appropriate SPR-based target once observation error, parameter uncertainty, and refitting instability are propagated.\nIn that setting, the PPD provides a defensible way to translate increased concern into more precautionary advice. For example, one could compare the distributions of \\(F_{35\\%}\\) and \\(F_{40\\%}\\), use lower quantiles of the estimated reference point distribution rather than the median, or otherwise scale the applied harvest rate according to whether the risk table score indicates moderate or extreme concern. The main point is that an elevated risk score can be tied to a quantitative change in how conservative the chosen fishing mortality target should be, rather than relying only on an ad hoc adjustment."
   },
   {
     "objectID": "index.html#notes",
     "href": "index.html#notes",
     "title": "Posterior Predictive Reference Point Estimation in an Age-Structured Model",
     "section": "Notes",
-    "text": "Notes\n\nSelectivity used for SPR must match the operational definition (e.g., terminal year, block average)\nRecruitment assumptions can influence results if weight-at-age or maturity vary over time\nFlexible selectivity increases variance in \\(F_{35\\%}\\)"
+    "text": "Notes\n\nSelectivity used for SPR must match the operational definition (e.g., terminal year, block average)\nRecruitment assumptions can influence results if weight-at-age or maturity vary over time\nThe same workflow applies to \\(F_{35\\%}\\), \\(F_{40\\%}\\), or other SPR-based targets\nFlexible selectivity increases variance in these derived reference points"
   },
   {
     "objectID": "index.html#extensions",
     "href": "index.html#extensions",
     "title": "Posterior Predictive Reference Point Estimation in an Age-Structured Model",
     "section": "Extensions",
-    "text": "Extensions\n\nCompare plug-in vs re-estimated distributions\nEvaluate bias via median(\\(F_{35\\%}\\)) vs true generating value\nUse this framework inside MSE loops"
+    "text": "Extensions\n\nCompare plug-in vs re-estimated distributions\nEvaluate bias via median(\\(F_{35\\%}\\)) or median(\\(F_{40\\%}\\)) vs true generating value\nUse this framework to formalize risk-table adjustments to target fishing mortality\nUse this framework inside MSE loops"
   }
 ]

@@ -5,7 +5,7 @@ format: html
 
 ## Overview
 
-This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as $F_{35\%}$.
+This document describes a workflow to propagate uncertainty in a statistical age-structured stock assessment model with time-varying selectivity into derived reference points such as $F_{35\%}$ and $F_{40\%}$.
 
 The approach combines posterior predictive simulation with re-estimation.
 
@@ -68,15 +68,15 @@ where spawning biomass per recruit is derived from survivorship under fishing mo
 
 ---
 
-## Estimation of $F_{35\%}$
+## Estimation of SPR-Based Reference Points
 
-For each refit, we solve:
+For each refit, we solve for quantities such as:
 
 $$
 SPR(F_{35\%}) = 0.35
 $$
 
-using a root-finding algorithm.
+and, similarly, $SPR(F_{40\%}) = 0.40$ using a root-finding algorithm.
 
 ---
 
@@ -93,6 +93,7 @@ for (s in 1:S) {
   sel_hat <- extract_selectivity(fit_s$rep)
 
   F35[s] <- find_F35(sel_hat, M, wa, mat)
+  F40[s] <- find_F40(sel_hat, M, wa, mat)
 }
 ```
 
@@ -100,11 +101,13 @@ for (s in 1:S) {
 
 ## Output
 
-The result is a distribution:
+The result is a posterior predictive distribution for each reference point, for example:
 
 $$
 \{ F_{35\%}^{(s)} \}_{s=1}^S
 $$
+
+and likewise $\{ F_{40\%}^{(s)} \}_{s=1}^S$.
 
 This reflects:
 
@@ -115,18 +118,30 @@ This reflects:
 
 ---
 
+## Management Application
+
+One motivation for computing the posterior predictive distribution of quantities such as $F_{35\%}$ and $F_{40\%}$ is to support decisions when a risk table score is elevated for assessment-related considerations or population dynamics considerations.
+
+When the risk table remains at a normal level, a single plug-in estimate of a reference point may be adequate for routine advice. When concern is raised, however, the distribution itself becomes informative because it shows how much uncertainty there is in the appropriate SPR-based target once observation error, parameter uncertainty, and refitting instability are propagated.
+
+In that setting, the PPD provides a defensible way to translate increased concern into more precautionary advice. For example, one could compare the distributions of $F_{35\%}$ and $F_{40\%}$, use lower quantiles of the estimated reference point distribution rather than the median, or otherwise scale the applied harvest rate according to whether the risk table score indicates moderate or extreme concern. The main point is that an elevated risk score can be tied to a quantitative change in how conservative the chosen fishing mortality target should be, rather than relying only on an ad hoc adjustment.
+
+---
+
 ## Notes
 
 * Selectivity used for SPR must match the operational definition (e.g., terminal year, block average)
 * Recruitment assumptions can influence results if weight-at-age or maturity vary over time
-* Flexible selectivity increases variance in $F_{35\%}$
+* The same workflow applies to $F_{35\%}$, $F_{40\%}$, or other SPR-based targets
+* Flexible selectivity increases variance in these derived reference points
 
 ---
 
 ## Extensions
 
 * Compare plug-in vs re-estimated distributions
-* Evaluate bias via median($F_{35\%}$) vs true generating value
+* Evaluate bias via median($F_{35\%}$) or median($F_{40\%}$) vs true generating value
+* Use this framework to formalize risk-table adjustments to target fishing mortality
 * Use this framework inside MSE loops
 
 ---
